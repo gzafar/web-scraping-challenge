@@ -1,19 +1,16 @@
 from splinter import Browser
 from bs4 import BeautifulSoup as bs
-import pymongo
 import requests
 from flask import Flask, render_template
 import pandas as pd
 from webdriver_manager.chrome import ChromeDriverManager
 
 executable_path = {'executable_path': ChromeDriverManager().install()}
-browser = Browser('chrome', **executable_path, headless=False)
+browser = Browser('chrome', **executable_path, headless=True)
 
-conn = "mongodb://localhost:27017"
-client = pymongo.MongoClient(conn)
 
 def scrape():
-    browser=init_browser()
+    # browser=init_browser()
     mars_dict = {}
 
     url = 'https://redplanetscience.com/'
@@ -23,8 +20,8 @@ def scrape():
     soup = bs(html, 'html.parser')
 
     # NASA Mars News
-    news_title = soup.find_all('div', class_='content_title')[0].text
-    news_p = soup.find_all('div', class_='article_teaser_body')[0].text
+    news_title = soup.find_all('div', class_='content_title')
+    news_p = soup.find_all('div', class_='article_teaser_body')
 
     # JPL Mars Space Images - Featured
     space_images_url = 'https://spaceimages-mars.com/'
@@ -78,7 +75,7 @@ def scrape():
             'img_src': img_src
         }
         
-    mars_hemispheres.append(hemisphere_dict)
+        mars_hemispheres.append(hemisphere_dict)
 
 
 
@@ -95,6 +92,9 @@ def scrape():
     browser.quit()
 
     return mars_dict
+
+if __name__ == "__main__":
+    scrape()
 
 
 
